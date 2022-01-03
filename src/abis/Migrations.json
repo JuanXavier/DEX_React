@@ -53,7 +53,7 @@
   "sourceMap": "66:352:2:-;;;113:10;90:33;;;;;;;;;;;;;;;;;;;;66:352;8:9:-1;5:2;;;30:1;27;20:12;5:2;66:352:2;;;;;;;",
   "deployedSourceMap": "66:352:2:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;66:352:2;;;;;;;;;;;;;;;;;;;;;;;;;;;;;127:36;;;:::i;:::-;;;;;;;;;;;;;;;;;;;90:33;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;313:103;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;313:103:2;;;;;;;;;;;;;;;;;:::i;:::-;;127:36;;;;:::o;90:33::-;;;;;;;;;;;;;:::o;313:103::-;225:5;;;;;;;;;;;211:19;;:10;:19;;;196:101;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;402:9;375:24;:36;;;;313:103;:::o",
   "source": "// SPDX-License-Identifier: MIT\npragma solidity >=0.4.22 <0.9.0;\n\ncontract Migrations {\n  address public owner = msg.sender;\n  uint public last_completed_migration;\n\n  modifier restricted() {\n    require(\n      msg.sender == owner,\n      \"This function is restricted to the contract's owner\"\n    );\n    _;\n  }\n\n  function setCompleted(uint completed) public restricted {\n    last_completed_migration = completed;\n  }\n}\n",
-  "sourcePath": "C:\\Users\\boris\\Desktop\\last-try\\src\\contracts\\Migrations.sol",
+  "sourcePath": "C:\\Users\\boris\\desktop\\last-try\\src\\contracts\\Migrations.sol",
   "ast": {
     "absolutePath": "project:/src/contracts/Migrations.sol",
     "exportedSymbols": {
@@ -912,21 +912,15 @@
     "version": "0.5.17+commit.d19bba13.Emscripten.clang"
   },
   "networks": {
-    "1640190680190": {
+    "5777": {
       "events": {},
       "links": {},
-      "address": "0x66ed574Ab9818EaEDD5FFc04FDd76aFe21AB4444",
-      "transactionHash": "0x95a0d3a6c03b14c50e551bb285ccce95c42bb55b5a0047c84e76d1e7859da208"
-    },
-    "1640538275880": {
-      "events": {},
-      "links": {},
-      "address": "0x75c80cF6D52eE18532CBd586A78B394143F1e387",
-      "transactionHash": "0x67742a3e3c8e6557a81070e972d561527023ba50ae3b415bd9a6c30228d80a5a"
+      "address": "0x6d59B13a7D4eA2122500d881a86b382922943a74",
+      "transactionHash": "0x33925dcad52af53fc9714111194198e70591c73ccb268891f59a62506592709f"
     }
   },
   "schemaVersion": "3.4.3",
-  "updatedAt": "2021-12-26T20:06:44.190Z",
+  "updatedAt": "2021-12-31T22:58:58.307Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}

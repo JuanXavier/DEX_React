@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.22 <0.9.0;
+pragma solidity >=0.4.22 <=0.9.0;
 
 import './Token.sol';
 import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
@@ -8,7 +8,6 @@ contract Exchange {
 
 	using SafeMath for uint256;
 
-	// Account that receives statefees
 	address public feeAccount;
 	uint256 public feePercent;
 	address constant ETHER = address(0); // store ether in mapping with blank address
@@ -143,6 +142,8 @@ contract Exchange {
 		emit Cancel(_order.id, msg.sender, _order.tokenGet, _order.amountGet, _order.tokenGive, _order.amountGive, now);
 	}
 
+	/*----------------------------------------------------------*/
+
 	function fillOrder(uint256 _id) public {
 		require(_id > 0 && _id <= orderCount);
 		require(!orderFilled[_id]);
@@ -155,6 +156,8 @@ contract Exchange {
 
 		// mark order as filled
 	}
+
+	/*----------------------------------------------------------*/
 
 	function _trade(uint256 _orderId, address _user, address _tokenGet,
 	uint256 _amountGet, address _tokenGive, uint256 _amountGive) internal {
