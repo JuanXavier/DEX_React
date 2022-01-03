@@ -115,6 +115,14 @@ export const subscribeToEvents = async (exchange, dispatch) => {
 	exchange.events.Trade({}, (error, event) => {
 		dispatch(orderFilled(event.returnValues));
 	});
+
+	exchange.events.Deposit({}, (error, event) => {
+		dispatch(balancesLoaded());
+	});
+
+	exchange.events.Withdraw({}, (error, event) => {
+		dispatch(balancesLoaded());
+	});
 };
 
 /*--------------------------------------------------------------*/

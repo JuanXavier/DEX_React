@@ -67,7 +67,7 @@ const showForm = (props) => {
 						</tr>
 					</tbody>
 				</table>
-
+				{/*-----------------------DEPOSIT ETHER-------------------------------*/}
 				<form
 					className='row'
 					onSubmit={(event) => {
@@ -89,7 +89,7 @@ const showForm = (props) => {
 						</button>
 					</div>
 				</form>
-
+				{/*---------------------------------------------------------*/}
 				<table className='table table-dark table-sm small'>
 					<tbody>
 						<tr>
@@ -99,7 +99,7 @@ const showForm = (props) => {
 						</tr>
 					</tbody>
 				</table>
-
+				{/*------------------DEPOSIT TOKEN---------------------------------*/}
 				<form
 					className='row'
 					onSubmit={(event) => {
@@ -122,7 +122,7 @@ const showForm = (props) => {
 					</div>
 				</form>
 			</Tab>
-
+			{/*--------------------WITHDRAW TABLE---------------------------------*/}
 			<Tab eventKey='withdraw' title='Withdraw' className='bg-dark'>
 				<table className='table table-dark table-sm small'>
 					<thead>
@@ -140,7 +140,7 @@ const showForm = (props) => {
 						</tr>
 					</tbody>
 				</table>
-
+				{/*---------------------WITHDRAW ETHER-------------------------------*/}
 				<form
 					className='row'
 					onSubmit={(event) => {
@@ -162,7 +162,7 @@ const showForm = (props) => {
 						</button>
 					</div>
 				</form>
-
+				{/*---------------------------------------------------------*/}
 				<table className='table table-dark table-sm small'>
 					<tbody>
 						<tr>
@@ -172,7 +172,7 @@ const showForm = (props) => {
 						</tr>
 					</tbody>
 				</table>
-
+				{/*---------------------WITHDRAW TOKEN----------------------------*/}
 				<form
 					className='row'
 					onSubmit={(event) => {
@@ -194,6 +194,7 @@ const showForm = (props) => {
 						</button>
 					</div>
 				</form>
+				{/*---------------------------------------------------------*/}
 			</Tab>
 		</Tabs>
 	);
