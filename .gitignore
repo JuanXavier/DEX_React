@@ -19,6 +19,8 @@
 .env.test.local
 .env.production.local
 private.json
+notes.txt
+
 
 npm-debug.log*
 yarn-debug.log*
