@@ -1,7 +1,7 @@
 export const chartOptions = {
 	chart: {
-		animations: {enabled: false},
-		toolbar: {show: false},
+		animations: {enabled: true},
+		toolbar: {show: true},
 		width: '100px',
 	},
 	tooltip: {
@@ -21,7 +21,7 @@ export const chartOptions = {
 			title: 'price',
 		},
 		marker: {
-			show: false,
+			show: true,
 		},
 		items: {
 			display: 'flex',
@@ -39,7 +39,7 @@ export const chartOptions = {
 			show: true,
 			style: {
 				colors: '#fff',
-				fontSize: '8px',
+				fontSize: '11px',
 				cssClass: 'apexcharts-xaxis-label',
 			},
 		},
@@ -50,8 +50,8 @@ export const chartOptions = {
 			minWidth: 0,
 			maxWidth: 160,
 			style: {
-				color: '#fff',
-				fontSize: '8px',
+				colors: '#fff',
+				fontSize: '11px',
 				cssClass: 'apexcharts-yaxis-label',
 			},
 			offsetX: 0,
@@ -60,6 +60,8 @@ export const chartOptions = {
 		},
 	},
 };
+
+/*-----------------Dummy data------------------*/
 
 export const dummyData = [
 	{

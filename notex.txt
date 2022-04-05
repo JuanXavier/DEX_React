@@ -22,3 +22,8 @@ nvm node 10.19.0?
 // [  ] 
 // [  ] 
 // [  ] 
+
+
+
+1. deposit some ETH on the DEX
+2. 

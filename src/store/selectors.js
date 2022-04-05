@@ -3,7 +3,8 @@ import {createSelector} from 'reselect';
 import moment from 'moment';
 import {ETHER_ADDRESS, GREEN, RED, tokens, ether, formatBalance} from '../helpers';
 
-/*--------------------------SELECTORS------------------------------------*/
+/*----------------------Selectors------------------------------*/
+// get prevents errors in the case web3 is null or undefined
 
 const account = (state) => get(state, 'web3.account');
 export const accountSelector = createSelector(account, (a) => a);
@@ -23,7 +24,7 @@ export const exchangeLoadedSelector = createSelector(exchangeLoaded, (el) => el)
 const exchange = (state) => get(state, 'exchange.contract');
 export const exchangeSelector = createSelector(exchange, (e) => e);
 
-/*--------------------------------------------------------------*/
+/*------------------Contract loaded---------------------*/
 
 export const contractsLoadedSelector = createSelector(
 	tokenLoaded,
@@ -31,48 +32,60 @@ export const contractsLoadedSelector = createSelector(
 	(tl, el) => tl && el
 );
 
-/*--------------------------------------------------------------*/
+/*------------------All orders loaded---------------------*/
 
 const allOrdersLoaded = (state) => get(state, 'exchange.allOrders.loaded', false);
 const allOrders = (state) => get(state, 'exchange.allOrders.data', []);
 
-/*--------------------------------------------------------------*/
+/*---------------Cancelled Orders loaded------------------*/
 
-const cancelledOrdersLoaded = (state) => get(state, 'exchange.cancelledOrders.loaded', false);
+const cancelledOrdersLoaded = (state) =>
+	get(state, 'exchange.cancelledOrders.loaded', false);
+
 export const cancelledOrderdLoadedSelector = createSelector(
 	cancelledOrdersLoaded,
 	(loaded) => loaded
 );
 
-/*--------------------------------------------------------------*/
-
 const cancelledOrders = (state) => get(state, 'exchange.cancelledOrders.data', []);
 export const cancelledOrdersSelector = createSelector(cancelledOrders, (o) => o);
 
-/*--------------------------------------------------------------*/
+/*---------------Filled Orders loaded---------------------*/
 
 const filledOrdersLoaded = (state) => get(state, 'exchange.filledOrders.loaded', false);
-export const filledOrdersLoadedSelector = createSelector(filledOrdersLoaded, (loaded) => loaded);
 
-/*--------------------------------------------------------------*/
+/*-----------------*/
+
+export const filledOrdersLoadedSelector = createSelector(
+	filledOrdersLoaded,
+	(loaded) => loaded
+);
+
+/*-----------------*/
 
 const filledOrders = (state) => get(state, 'exchange.filledOrders.data', []);
+
+/*-----------------*/
+
 export const filledOrdersSelector = createSelector(filledOrders, (orders) => {
 	// Sort orders by date ascending for price comparison
 	orders = orders.sort((a, b) => a.timestamp - b.timestamp);
+
 	// Decorate the orders
 	orders = decorateFilledOrders(orders);
+
 	// Sort orders by date descending for display
 	orders = orders.sort((a, b) => b.timestamp - a.timestamp);
-	console.log(orders);
+
 	return orders;
 });
 
-/*--------------------------------------------------------------*/
+/*--------------Decorate filled orders--------------------*/
 
 const decorateFilledOrders = (orders) => {
 	// Track previous order to compare history
 	let previousOrder = orders[0];
+
 	return orders.map((order) => {
 		order = decorateOrder(order);
 		order = decorateFilledOrder(order, previousOrder);
@@ -81,7 +94,7 @@ const decorateFilledOrders = (orders) => {
 	});
 };
 
-/*--------------------------------------------------------------*/
+/*--------------Decorate orders--------------------*/
 
 const decorateOrder = (order) => {
 	let etherAmount;
@@ -105,11 +118,11 @@ const decorateOrder = (order) => {
 		etherAmount: ether(etherAmount),
 		tokenAmount: tokens(tokenAmount),
 		tokenPrice,
-		formattedTimestamp: moment.unix(order.timestamp).format('h:mm:ss a M/D'),
+		formattedTimestamp: moment.unix(order.timestamp).format('MMM Do YYYY, H:mm:ss'),
 	};
 };
 
-/*--------------------------------------------------------------*/
+/*--------------Decorate filled--------------------*/
 
 const decorateFilledOrder = (order, previousOrder) => {
 	return {
@@ -118,14 +131,16 @@ const decorateFilledOrder = (order, previousOrder) => {
 	};
 };
 
+/*-----------------*/
+
 const tokenPriceClass = (tokenPrice, orderId, previousOrder) => {
 	// Show green price if only one order exists
 	if (previousOrder.id === orderId) {
 		return GREEN;
 	}
 
-	// Show green price if order price higher than previous order
-	// Show red price if order price lower than previous order
+	// Show green price if order price is higher than previous order
+	// Show red price if order price is lower than previous order
 	if (previousOrder.tokenPrice <= tokenPrice) {
 		return GREEN;
 	} else {
@@ -133,7 +148,7 @@ const tokenPriceClass = (tokenPrice, orderId, previousOrder) => {
 	}
 };
 
-/*--------------------------------------------------------------*/
+/*--------------------Open orders-------------------------*/
 
 const openOrders = (state) => {
 	const all = allOrders(state);
@@ -149,34 +164,34 @@ const openOrders = (state) => {
 	return openOrders;
 };
 
-/*--------------------------------------------------------------*/
+/*----------------------Order Book-------------------------*/
 
 const orderBookLoaded = (state) =>
 	cancelledOrdersLoaded(state) && filledOrdersLoaded(state) && allOrdersLoaded(state);
 
-export const orderBookLoadedSelector = createSelector(orderBookLoaded, (loaded) => loaded);
+/*-----------------*/
 
-/*--------------------------------------------------------------*/
+export const orderBookLoadedSelector = createSelector(
+	orderBookLoaded,
+	(loaded) => loaded
+);
+
+/*-----------------*/
 
 export const orderBookSelector = createSelector(openOrders, (orders) => {
-	// Decorate orders
+	// Decorate orders and group them by orderType
 	orders = decorateOrderBookOrders(orders);
-
 	orders = groupBy(orders, 'orderType');
 
-	// Fetch buy orders
+	// Fetch buy orders and sort them by token price (high to low)
 	const buyOrders = get(orders, 'buy', []);
-
-	// Sort by orders by token price
 	orders = {
 		...orders,
 		buyOrders: buyOrders.sort((a, b) => b.tokenPrice - a.tokenPrice),
 	};
 
-	// Fetch sell orders
+	// Fetch sell orders and sort them by token price (high to low)
 	const sellOrders = get(orders, 'sell', []);
-
-	// Sort by orders by token price
 	orders = {
 		...orders,
 		sellOrders: sellOrders.sort((a, b) => b.tokenPrice - a.tokenPrice),
@@ -185,7 +200,7 @@ export const orderBookSelector = createSelector(openOrders, (orders) => {
 	return orders;
 });
 
-/*--------------------------------------------------------------*/
+/*--------------Decorate Order Book orders-----------------------*/
 
 const decorateOrderBookOrders = (orders) => {
 	return orders.map((order) => {
@@ -195,7 +210,7 @@ const decorateOrderBookOrders = (orders) => {
 	});
 };
 
-/*--------------------------------------------------------------*/
+/*-----------------------*/
 
 const decorateOrderBookOrder = (order) => {
 	const orderType = order.tokenGive === ETHER_ADDRESS ? 'buy' : 'sell';
@@ -207,21 +222,32 @@ const decorateOrderBookOrder = (order) => {
 	};
 };
 
-/*--------------------------------------------------------------*/
+/*-------------------My filled orders----------------------*/
 
-export const myFilledOrdersLoadedSelector = createSelector(filledOrdersLoaded, (loaded) => loaded);
+export const myFilledOrdersLoadedSelector = createSelector(
+	filledOrdersLoaded,
+	(loaded) => loaded
+);
 
-export const myFilledOrdersSelector = createSelector(account, filledOrders, (account, orders) => {
-	// Find our orders
-	orders = orders.filter((o) => o.user === account || o.userFill === account);
-	// Sort by date ascending
-	orders = orders.sort((a, b) => a.timestamp - b.timestamp);
-	// Decorate orders - add display attributes
-	orders = decorateMyFilledOrders(orders, account);
-	return orders;
-});
+/*-----------------------*/
 
-/*--------------------------------------------------------------*/
+export const myFilledOrdersSelector = createSelector(
+	account,
+	filledOrders,
+	(account, orders) => {
+		// Filter our orders
+		orders = orders.filter((o) => o.user === account || o.userFill === account);
+
+		// Sort by date ascending
+		orders = orders.sort((a, b) => a.timestamp - b.timestamp);
+
+		// Decorate orders - add display attributes
+		orders = decorateMyFilledOrders(orders, account);
+		return orders;
+	}
+);
+
+/*--------------Decorate my filled orders------------------------*/
 
 const decorateMyFilledOrders = (orders, account) => {
 	return orders.map((order) => {
@@ -231,12 +257,12 @@ const decorateMyFilledOrders = (orders, account) => {
 	});
 };
 
-/*--------------------------------------------------------------*/
+/*-----------------------*/
 
 const decorateMyFilledOrder = (order, account) => {
 	const myOrder = order.user === account;
-
 	let orderType;
+
 	if (myOrder) {
 		orderType = order.tokenGive === ETHER_ADDRESS ? 'buy' : 'sell';
 	} else {
@@ -251,24 +277,32 @@ const decorateMyFilledOrder = (order, account) => {
 	};
 };
 
-/*--------------------------------------------------------------*/
+/*----------------------My open Orders-------------------------*/
 
-export const myOpenOrdersLoadedSelector = createSelector(orderBookLoaded, (loaded) => loaded);
+export const myOpenOrdersLoadedSelector = createSelector(
+	orderBookLoaded,
+	(loaded) => loaded
+);
 
-export const myOpenOrdersSelector = createSelector(account, openOrders, (account, orders) => {
-	// Filter orders created by current account
-	orders = orders.filter((o) => o.user === account);
+/*-----------------------*/
 
-	// Decorate orders - add display attributes
-	orders = decorateMyOpenOrders(orders);
+export const myOpenOrdersSelector = createSelector(
+	account,
+	openOrders,
+	(account, orders) => {
+		// Filter orders created by current account
+		orders = orders.filter((o) => o.user === account);
 
-	// Sort orders by date descending
-	orders = orders.sort((a, b) => b.timestamp - a.timestamp);
+		// Decorate orders - add display attributes
+		orders = decorateMyOpenOrders(orders);
 
-	return orders;
-});
+		// Sort orders by date descending
+		orders = orders.sort((a, b) => b.timestamp - a.timestamp);
+		return orders;
+	}
+);
 
-/*--------------------------------------------------------------*/
+/*----------------Decorate my open orders-----------------------*/
 
 const decorateMyOpenOrders = (orders, account) => {
 	return orders.map((order) => {
@@ -278,7 +312,7 @@ const decorateMyOpenOrders = (orders, account) => {
 	});
 };
 
-/*--------------------------------------------------------------*/
+/*-----------------------*/
 
 const decorateMyOpenOrder = (order, account) => {
 	let orderType = order.tokenGive === ETHER_ADDRESS ? 'buy' : 'sell';
@@ -290,9 +324,12 @@ const decorateMyOpenOrder = (order, account) => {
 	};
 };
 
-/*--------------------------------------------------------------*/
+/*--------------------Price Chart ---------------------*/
 
-export const priceChartLoadedSelector = createSelector(filledOrdersLoaded, (loaded) => loaded);
+export const priceChartLoadedSelector = createSelector(
+	filledOrdersLoaded,
+	(loaded) => loaded
+);
 
 export const priceChartSelector = createSelector(filledOrders, (orders) => {
 	// Sort orders by date ascending to compare history
@@ -322,21 +359,24 @@ export const priceChartSelector = createSelector(filledOrders, (orders) => {
 	};
 });
 
-/*--------------------------------------------------------------*/
+/*-------------------Build data for chart-------------------------*/
 
 const buildGraphData = (orders) => {
 	// Group the orders by hour for the graph
 	orders = groupBy(orders, (o) => moment.unix(o.timestamp).startOf('hour').format());
+
 	// Get each hour where data exists
 	const hours = Object.keys(orders);
+
 	// Build the graph series
 	const graphData = hours.map((hour) => {
 		// Fetch all the orders from current hour
 		const group = orders[hour];
+
 		// Calculate price values - open, high, low, close
 		const open = group[0]; // first order
-		const high = maxBy(group, 'tokenPrice'); // high price
-		const low = minBy(group, 'tokenPrice'); // low price
+		const high = maxBy(group, 'tokenPrice');
+		const low = minBy(group, 'tokenPrice');
 		const close = group[group.length - 1]; // last order
 
 		return {
@@ -348,10 +388,13 @@ const buildGraphData = (orders) => {
 	return graphData;
 };
 
-/*--------------------------------------------------------------*/
+/*-----------------Order cancelling/filling-----------------------*/
 
 const orderCancelling = (state) => get(state, 'exchange.orderCancelling', false);
-export const orderCancellingSelector = createSelector(orderCancelling, (status) => status);
+export const orderCancellingSelector = createSelector(
+	orderCancelling,
+	(status) => status
+);
 
 const orderFilling = (state) => get(state, 'exchange.orderFilling', false);
 export const orderFillingSelector = createSelector(orderFilling, (status) => status);
@@ -359,36 +402,83 @@ export const orderFillingSelector = createSelector(orderFilling, (status) => sta
 /*----------------------------BALANCES----------------------------------*/
 
 const balancesLoading = (state) => get(state, 'exchange.balancesLoading', true);
-export const balancesLoadingSelector = createSelector(balancesLoading, (status) => status);
+export const balancesLoadingSelector = createSelector(
+	balancesLoading,
+	(status) => status
+);
+
+/*----------------*/
 
 const etherBalance = (state) => get(state, 'web3.balance', 0);
 export const etherBalanceSelector = createSelector(etherBalance, (balance) => {
 	return formatBalance(balance);
 });
 
+/*----------------*/
+
 const tokenBalance = (state) => get(state, 'token.balance', 0);
 export const tokenBalanceSelector = createSelector(tokenBalance, (balance) => {
 	return formatBalance(balance);
 });
 
+/*----------------*/
+
 const exchangeEtherBalance = (state) => get(state, 'exchange.etherBalance', 0);
-export const exchangeEtherBalanceSelector = createSelector(exchangeEtherBalance, (balance) => {
-	return formatBalance(balance);
-});
+export const exchangeEtherBalanceSelector = createSelector(
+	exchangeEtherBalance,
+	(balance) => {
+		return formatBalance(balance);
+	}
+);
+
+/*----------------*/
 
 const exchangeTokenBalance = (state) => get(state, 'exchange.tokenBalance', 0);
-export const exchangeTokenBalanceSelector = createSelector(exchangeTokenBalance, (balance) => {
-	return formatBalance(balance);
-});
+export const exchangeTokenBalanceSelector = createSelector(
+	exchangeTokenBalance,
+	(balance) => {
+		return formatBalance(balance);
+	}
+);
+
+/*----------------*/
 
 const etherDepositAmount = (state) => get(state, 'exchange.etherDepositAmount', null);
-export const etherDepositAmountSelector = createSelector(etherDepositAmount, (amount) => amount);
+export const etherDepositAmountSelector = createSelector(
+	etherDepositAmount,
+	(amount) => amount
+);
+
+/*----------------*/
 
 const etherWithdrawAmount = (state) => get(state, 'exchange.etherWithdrawAmount', null);
-export const etherWithdrawAmountSelector = createSelector(etherWithdrawAmount, (amount) => amount);
+export const etherWithdrawAmountSelector = createSelector(
+	etherWithdrawAmount,
+	(amount) => amount
+);
+
+/*----------------*/
 
 const tokenDepositAmount = (state) => get(state, 'exchange.tokenDepositAmount', null);
-export const tokenDepositAmountSelector = createSelector(tokenDepositAmount, (amount) => amount);
+export const tokenDepositAmountSelector = createSelector(
+	tokenDepositAmount,
+	(amount) => amount
+);
+
+/*----------------*/
 
 const tokenWithdrawAmount = (state) => get(state, 'exchange.tokenWithdrawAmount', null);
-export const tokenWithdrawAmountSelector = createSelector(tokenWithdrawAmount, (amount) => amount);
+export const tokenWithdrawAmountSelector = createSelector(
+	tokenWithdrawAmount,
+	(amount) => amount
+);
+
+/*----------------*/
+
+const buyOrder = (state) => get(state, 'exchange.buyOrder', {});
+export const buyOrderSelector = createSelector(buyOrder, (order) => order);
+
+/*----------------*/
+
+const sellOrder = (state) => get(state, 'exchange.sellOrder', {});
+export const sellOrderSelector = createSelector(sellOrder, (order) => order);

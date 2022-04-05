@@ -5,7 +5,7 @@ import rootReducer from './reducers';
 const loggerMiddleware = createLogger();
 const middleware = [];
 
-// for redux dev tools
+// for redux dev tools extensions
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export default function configureStore(preloadedState) {

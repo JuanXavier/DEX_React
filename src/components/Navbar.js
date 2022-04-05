@@ -6,8 +6,8 @@ class Navbar extends Component {
 	render() {
 		return (
 			<nav className='navbar navbar-expand-lg navbar-dark bg-primary'>
-				<a className='navbar-brand' href='#/'>
-					DApp Token Exchange
+				<a className='navbar-brand font-weight-bold' href='/'>
+					Xtake Token Exchange
 				</a>
 				<button
 					className='navbar-toggler'
@@ -22,8 +22,8 @@ class Navbar extends Component {
 				<ul className='navbar-nav ml-auto'>
 					<li className='nav-item'>
 						<a
-							className='nav-link small'
-							href={`https://etherscan.io/address/${this.props.account}`}
+							className='nav-link '
+							href={`https://rinkeby.etherscan.io/address/${this.props.account}`}
 							target='_blank'
 							rel='noopener noreferrer'>
 							{this.props.account}

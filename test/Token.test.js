@@ -1,50 +1,40 @@
 const Token = artifacts.require('./Token');
-
 import {tokens, EVM_REVERT} from './helpers';
-
 require('chai').use(require('chai-as-promised')).should();
 
 contract('Token', ([deployer, receiver, exchange]) => {
 	let token;
-	const name = 'Xtoken';
+	const name = 'Xtake Token';
 	const symbol = 'XTK';
 	const decimals = '18';
-	const totalSupply = tokens(1000000).toString();
+	const totalSupply = String(tokens(1000000));
 
 	beforeEach(async () => {
 		token = await Token.new();
 	});
 
-	/*-------------------------------------------------------------------------*/
+	/*--------------------Deployment---------------------*/
 
 	describe('Deployment', () => {
-		it('Tracks name', async () => {
+		it('Tracks the name', async () => {
 			const result = await token.name();
 			result.should.equal(name);
 		});
 
-		/*-----------------------------------------------------------------------*/
-
-		it('Tracks symbol', async () => {
+		it('Tracks the symbol', async () => {
 			const result = await token.symbol();
 			result.should.equal(symbol);
 		});
 
-		/*-----------------------------------------------------------------------*/
-
-		it('Tracks decimals', async () => {
+		it('Tracks the decimals', async () => {
 			const result = await token.decimals();
 			result.toString().should.equal(decimals);
 		});
 
-		/*-----------------------------------------------------------------------*/
-
-		it('Tracks total supply', async () => {
+		it('Tracks the total supply', async () => {
 			const result = await token.totalSupply();
 			result.toString().should.equal(totalSupply.toString());
 		});
-
-		/*-----------------------------------------------------------------------*/
 
 		it('Assings total supply to deployer', async () => {
 			const result = await token.balanceOf(deployer);
@@ -52,11 +42,13 @@ contract('Token', ([deployer, receiver, exchange]) => {
 		});
 	});
 
+	/*-------------------Send tokens---------------------*/
+
 	describe('Sending tokens', () => {
 		let amount;
 		let result;
 
-		/*-------------------------------------------------------------------------*/
+		/*-------------Success---------------*/
 
 		describe('Success', async () => {
 			beforeEach(async () => {
@@ -85,10 +77,13 @@ contract('Token', ([deployer, receiver, exchange]) => {
 			});
 		});
 
+		/*------------Failure----------------*/
+
 		describe('Failure', async () => {
 			it('rejects insufficient balances', async () => {
 				let invalidAmount;
 				invalidAmount = tokens(100000000);
+
 				await token
 					.transfer(receiver, invalidAmount, {from: deployer})
 					.should.be.rejectedWith(EVM_REVERT);
@@ -105,6 +100,8 @@ contract('Token', ([deployer, receiver, exchange]) => {
 		});
 	});
 
+	/*--------------------Approving----------------------*/
+
 	describe('Approving tokens', () => {
 		let result;
 		let amount;
@@ -115,7 +112,7 @@ contract('Token', ([deployer, receiver, exchange]) => {
 		});
 
 		describe('Success', () => {
-			it('Allocates an allowance for delegated token spending on exchange', async () => {
+			it('Allocates an allowance for delegated token spending for the exchange', async () => {
 				const allowance = await token.allowance(deployer, exchange);
 				allowance.toString().should.equal(amount.toString());
 			});
@@ -131,12 +128,16 @@ contract('Token', ([deployer, receiver, exchange]) => {
 			});
 		});
 
+		/*------------------------------------*/
+
 		describe('Failure', () => {
 			it('Rejects invalid spenders', async () => {
 				await token.approve(0x0, amount, {from: deployer}).should.be.rejected;
 			});
 		});
 	});
+
+	/*--------------Delegated transfers------------------*/
 
 	describe('Delegated token transfers', () => {
 		let result;
@@ -147,6 +148,8 @@ contract('Token', ([deployer, receiver, exchange]) => {
 			await token.approve(exchange, amount, {from: deployer});
 		});
 
+		/*------------------------------------*/
+
 		describe('Success', async () => {
 			beforeEach(async () => {
 				result = await token.transferFrom(deployer, receiver, amount, {from: exchange});
@@ -154,8 +157,10 @@ contract('Token', ([deployer, receiver, exchange]) => {
 
 			it('Transfers token balances', async () => {
 				let balanceOf;
+
 				balanceOf = await token.balanceOf(deployer);
 				balanceOf.toString().should.equal(tokens(999900).toString());
+
 				balanceOf = await token.balanceOf(receiver);
 				balanceOf.toString().should.equal(tokens(100).toString());
 			});
@@ -168,6 +173,7 @@ contract('Token', ([deployer, receiver, exchange]) => {
 			it('Emits a Transfer event', async () => {
 				const log = result.logs[0];
 				log.event.should.equal('Transfer');
+
 				const event = log.args;
 				event._from.toString().should.equal(deployer, 'from is correct');
 				event._to.should.equal(receiver, 'to is correct');
@@ -175,9 +181,12 @@ contract('Token', ([deployer, receiver, exchange]) => {
 			});
 		});
 
+		/*------------------------------------*/
+
 		describe('Failure', async () => {
 			it('Rejects insufficient amounts', async () => {
 				const invalidAmount = tokens(100000000);
+
 				await token
 					.transferFrom(deployer, receiver, invalidAmount, {from: exchange})
 					.should.be.rejectedWith(EVM_REVERT);

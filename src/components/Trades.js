@@ -3,16 +3,16 @@ import {connect} from 'react-redux';
 import Spinner from './Spinner';
 import {filledOrdersLoadedSelector, filledOrdersSelector} from '../store/selectors';
 
-/*--------------------------------------------------------------*/
-
 const showFilledOrders = (filledOrders) => {
 	return (
 		<tbody>
 			{filledOrders.map((order) => {
 				return (
-					<tr className={`order-${order.id}`} key={order.id}>
-						<td className='text-muted'> {order.formattedTimestamp} </td>
+					<tr className={`order-${order.id} text-center`} key={order.id}>
+						<td className='text-muted '> {order.formattedTimestamp} </td>
+
 						<td> {order.tokenAmount} </td>
+
 						<td className={`text-${order.tokenPriceClass}`}> {order.tokenPrice} </td>
 					</tr>
 				);
@@ -21,21 +21,21 @@ const showFilledOrders = (filledOrders) => {
 	);
 };
 
-/*--------------------------------------------------------------*/
+/*-------------------------------------------------*/
 
 class Trades extends Component {
 	render() {
 		return (
 			<div className='vertical'>
 				<div className='card bg-dark text-white'>
-					<div className='card-header'>Trades</div>
+					<div className='card-header text-center font-weight-bold'>Trades</div>
 					<div className='card-body'>
-						<table className='table table-dark table-sm small'>
+						<table className='table table-dark table-sm small text-center '>
 							<thead>
 								<tr>
 									<th>Time</th>
-									<th>DAPP</th>
-									<th>DAPP/ETH</th>
+									<th>XTK</th>
+									<th>XTK/ETH</th>
 								</tr>
 							</thead>
 
@@ -51,8 +51,6 @@ class Trades extends Component {
 		);
 	}
 }
-
-/*--------------------------------------------------------------*/
 
 function mapStateToProps(state) {
 	return {

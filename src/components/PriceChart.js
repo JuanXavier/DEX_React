@@ -8,7 +8,7 @@ import {priceChartLoadedSelector, priceChartSelector} from '../store/selectors';
 const priceSymbol = (lastPriceChange) => {
 	let output;
 	if (lastPriceChange === '+') {
-		output = <span className='text-success'>&#9650;</span>; // Green up tiangle
+		output = <span className='text-success'>&#9650;</span>; // Green up triangle
 	} else {
 		output = <span className='text-danger'>&#9660;</span>; // Red down triangle
 	}
@@ -18,12 +18,14 @@ const priceSymbol = (lastPriceChange) => {
 const showPriceChart = (priceChart) => {
 	return (
 		<div className='price-chart'>
-			<div className='price'>
-				<h4>
-					DAPP/ETH &nbsp; {priceSymbol(priceChart.lastPriceChange)} &nbsp; {priceChart.lastPrice}
-				</h4>
+			<div>
+				<h6 className='text-center pt-3'>
+					XTK/ETH &nbsp; {priceSymbol(priceChart.lastPriceChange)} &nbsp;
+					{priceChart.lastPrice}
+				</h6>
 			</div>
 			<Chart
+				className='pchart'
 				options={chartOptions}
 				series={priceChart.series}
 				type='candlestick'
@@ -37,10 +39,14 @@ const showPriceChart = (priceChart) => {
 class PriceChart extends Component {
 	render() {
 		return (
-			<div className='card bg-dark text-white'>
-				<div className='card-header'>Price Chart</div>
-				<div className='card-body'>
-					{this.props.priceChartLoaded ? showPriceChart(this.props.priceChart) : <Spinner />}
+			<div className='card bg-dark text-white '>
+				<div className='card-header text-center font-weight-bold'>Hourly Price Chart</div>
+				<div className='card-body '>
+					{this.props.priceChartLoaded ? (
+						showPriceChart(this.props.priceChart)
+					) : (
+						<Spinner />
+					)}
 				</div>
 			</div>
 		);

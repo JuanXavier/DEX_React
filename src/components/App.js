@@ -11,21 +11,33 @@ class App extends Component {
 		this.loadBlockchainData(this.props.dispatch);
 	}
 
+	componentDidMount() {
+		if (window.ethereum) {
+			window.ethereum.on('accountsChanged', async (_) => await window.location.reload());
+			window.ethereum.on('chainChanged', async (_) => await window.location.reload());
+		}
+	}
+
+	/*--------------Blockchain Data------------------*/
+
 	async loadBlockchainData(dispatch) {
 		const web3 = await loadWeb3(dispatch);
 		const networkId = await web3.eth.net.getId();
+
 		await loadAccount(web3, dispatch);
+
 		const token = await loadToken(web3, networkId, dispatch);
 		if (!token) {
 			window.alert(
-				'Token smart contract not detected on the current network. Please select another network with Metamask.'
+				'Token smart contract not detected on the current network. Please select RINKEBY TEST NETWORK with Metamask.'
 			);
 			return;
 		}
+
 		const exchange = await loadExchange(web3, networkId, dispatch);
 		if (!exchange) {
 			window.alert(
-				'Exchange smart contract not detected on the current network. Please select another network with Metamask.'
+				'Exchange smart contract not detected on the current network. Please select RINKEBY TEST NETWORK with Metamask.'
 			);
 			return;
 		}
@@ -35,7 +47,7 @@ class App extends Component {
 		return (
 			<div>
 				<Navbar />
-				{this.props.contractsLoaded ? <Content /> : <div className='content'></div>}
+				{this.props.contractsLoaded ? <Content /> : <div className='content'> </div>}
 			</div>
 		);
 	}

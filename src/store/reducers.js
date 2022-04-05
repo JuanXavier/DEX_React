@@ -1,6 +1,6 @@
 import {combineReducers} from 'redux';
 
-/*---------------------------------------------------------*/
+/*-------------------Web3----------------------*/
 
 function web3(state = {}, action) {
 	switch (action.type) {
@@ -18,7 +18,7 @@ function web3(state = {}, action) {
 	}
 }
 
-/*---------------------------------------------------------*/
+/*-------------------Token----------------------*/
 
 function token(state = {}, action) {
 	switch (action.type) {
@@ -33,7 +33,7 @@ function token(state = {}, action) {
 	}
 }
 
-/*---------------------------------------------------------*/
+/*-------------------Exchange----------------------*/
 
 function exchange(state = {}, action) {
 	let index, data;
@@ -41,6 +41,8 @@ function exchange(state = {}, action) {
 	switch (action.type) {
 		case 'EXCHANGE_LOADED':
 			return {...state, loaded: true, contract: action.contract};
+
+		/*----------------*/
 
 		case 'CANCELLED_ORDERS_LOADED':
 			return {...state, cancelledOrders: {loaded: true, data: action.cancelledOrders}};
@@ -50,6 +52,8 @@ function exchange(state = {}, action) {
 
 		case 'ALL_ORDERS_LOADED':
 			return {...state, allOrders: {loaded: true, data: action.allOrders}};
+
+		/*----------------*/
 
 		case 'ORDER_CANCELLING':
 			return {...state, orderCancelling: true};
@@ -63,6 +67,11 @@ function exchange(state = {}, action) {
 					data: [...state.cancelledOrders.data, action.order],
 				},
 			};
+
+		/*----------------*/
+
+		case 'ORDER_FILLING':
+			return {...state, orderFilling: true};
 
 		case 'ORDER_FILLED':
 			// Prevent duplicate orders
@@ -83,8 +92,7 @@ function exchange(state = {}, action) {
 				},
 			};
 
-		case 'ORDER_FILLING':
-			return {...state, orderFilling: true};
+		/*----------------*/
 
 		case 'EXCHANGE_ETHER_BALANCE_LOADED':
 			return {...state, etherBalance: action.balance};
@@ -92,11 +100,15 @@ function exchange(state = {}, action) {
 		case 'EXCHANGE_TOKEN_BALANCE_LOADED':
 			return {...state, tokenBalance: action.balance};
 
+		/*----------------*/
+
 		case 'BALANCES_LOADING':
 			return {...state, balancesLoading: true};
 
 		case 'BALANCES_LOADED':
 			return {...state, balancesLoading: false};
+
+		/*----------------*/
 
 		case 'ETHER_DEPOSIT_AMOUNT_CHANGED':
 			return {...state, etherDepositAmount: action.amount};
@@ -104,11 +116,69 @@ function exchange(state = {}, action) {
 		case 'ETHER_WITHDRAW_AMOUNT_CHANGED':
 			return {...state, etherWithdrawAmount: action.amount};
 
+		/*----------------*/
+
 		case 'TOKEN_DEPOSIT_AMOUNT_CHANGED':
 			return {...state, tokenDepositAmount: action.amount};
 
 		case 'TOKEN_WITHDRAW_AMOUNT_CHANGED':
 			return {...state, tokenWithdrawAmount: action.amount};
+
+		/*----------------*/
+
+		case 'BUY_ORDER_AMOUNT_CHANGED':
+			return {...state, buyOrder: {...state.buyOrder, amount: action.amount}};
+
+		case 'BUY_ORDER_PRICE_CHANGED':
+			return {...state, buyOrder: {...state.buyOrder, price: action.price}};
+
+		case 'BUY_ORDER_MAKING':
+			return {
+				...state,
+				buyOrder: {...state.buyOrder, amount: null, price: null, making: true},
+			};
+
+		/*----------------*/
+
+		case 'ORDER_MADE':
+			// Prevent duplicate orders
+			index = state.allOrders.data.findIndex((order) => order.id === action.order.id);
+
+			if (index === -1) {
+				data = [...state.allOrders.data, action.order];
+			} else {
+				data = state.allOrders.data;
+			}
+
+			return {
+				...state,
+				allOrders: {
+					...state.allOrders,
+					data,
+				},
+				buyOrder: {
+					...state.buyOrder,
+					making: false,
+				},
+				sellOrder: {
+					...state.sellOrder,
+					making: false,
+				},
+			};
+
+		/*----------------*/
+
+		case 'SELL_ORDER_AMOUNT_CHANGED':
+			return {...state, sellOrder: {...state.sellOrder, amount: action.amount}};
+
+		case 'SELL_ORDER_PRICE_CHANGED':
+			return {...state, sellOrder: {...state.sellOrder, price: action.price}};
+
+		case 'SELL_ORDER_MAKING':
+			return {
+				...state,
+				sellOrder: {...state.sellOrder, amount: null, price: null, making: true},
+			};
 
 		default:
 			return state;

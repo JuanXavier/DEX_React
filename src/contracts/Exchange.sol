@@ -5,23 +5,26 @@ import './Token.sol';
 import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
 
 contract Exchange {
-
 	using SafeMath for uint256;
 
+	// Account that receives exchange fees
 	address public feeAccount;
 	uint256 public feePercent;
-	address constant ETHER = address(0); // store ether in mapping with blank address
 
+	// asign the 0 address to ether, to store ether amount
+	// in mapping for minimizing storage on the blockchain
+	address constant ETHER = address(0);
+
+	// 1st key: token address, 2nd key: deposit user address, value: number of tokens
 	mapping(address => mapping(address => uint256)) public tokens;
 	mapping(uint256 => _Order) public orders;
 	mapping(uint256 => bool) public orderCancelled;
 	mapping(uint256 => bool) public orderFilled;
-
 	uint256 public orderCount;
 
 	event Deposit(address token, address user, uint256 amount, uint256 balance);
 	event Withdraw(address token, address user, uint256 amount, uint256 balance);
-	event Order (
+	event Order(
 		uint256 id,
 		address user,
 		address tokenGet,
@@ -30,7 +33,7 @@ contract Exchange {
 		uint256 amountGive,
 		uint256 timestamp
 	);
-	event Cancel (
+	event Cancel(
 		uint256 id,
 		address user,
 		address tokenGet,
@@ -67,20 +70,18 @@ contract Exchange {
 		feePercent = _feePercent;
 	}
 
-	/*----------------------------------------------------------*/
-
+	// Fallback function for refunding in case anyone sends ether
+	// to this contract.
 	function() external {
 		revert();
 	}
 
-	/*----------------------------------------------------------*/
+	/*-----------------Deposit/Withdraw ether-------------------*/
 
-	function depositEther() payable public {
+	function depositEther() public payable {
 		tokens[ETHER][msg.sender] = tokens[ETHER][msg.sender].add(msg.value);
 		emit Deposit(ETHER, msg.sender, msg.value, tokens[ETHER][msg.sender]);
 	}
-
-	/*----------------------------------------------------------*/
 
 	function withdrawEther(uint256 _amount) public {
 		require(tokens[ETHER][msg.sender] >= _amount);
@@ -89,93 +90,145 @@ contract Exchange {
 		emit Withdraw(ETHER, msg.sender, _amount, tokens[ETHER][msg.sender]);
 	}
 
-	/*----------------------------------------------------------*/
+	/*-----------------Deposit/Withdraw token-------------------*/
 
 	function depositToken(address _token, uint256 _amount) public {
-		// dont allow ether deposits
+		// Do not allow ether deposits
 		require(_token != ETHER);
-
 		require(Token(_token).transferFrom(msg.sender, address(this), _amount));
 
+		// Add the amount in the token mapping
 		tokens[_token][msg.sender] = tokens[_token][msg.sender].add(_amount);
-
 		emit Deposit(_token, msg.sender, _amount, tokens[_token][msg.sender]);
 	}
-
-	/*----------------------------------------------------------*/
 
 	function withdrawToken(address _token, uint256 _amount) public {
 		require(_token != ETHER);
 		require(tokens[_token][msg.sender] >= _amount);
 
 		tokens[_token][msg.sender] = tokens[_token][msg.sender].sub(_amount);
-
 		require(Token(_token).transfer(msg.sender, _amount));
 
 		emit Withdraw(_token, msg.sender, _amount, tokens[_token][msg.sender]);
 	}
 
-	/*----------------------------------------------------------*/
+	/*------------------Token balance function-------------------*/
 
-	function balanceOf(address _token, address _user) public view returns(uint256) {
+	function balanceOf(address _token, address _user) public view returns (uint256) {
 		return tokens[_token][_user];
 	}
 
-	/*----------------------------------------------------------*/
+	/*--------------------Make Order---------------------------*/
 
-	function makeOrder(address _tokenGet, uint256 _amountGet, 
-	address _tokenGive, uint256 _amountGive) public {
+	function makeOrder(
+		address _tokenGet,
+		uint256 _amountGet,
+		address _tokenGive,
+		uint256 _amountGive
+	) public {
 		orderCount = orderCount.add(1);
-		orders[orderCount] = _Order(orderCount, msg.sender, _tokenGet, _amountGet, _tokenGive, _amountGive, now);
-		emit Order(orderCount, msg.sender, _tokenGet, _amountGet, _tokenGive, _amountGive, now);
+
+		orders[orderCount] = _Order(
+			orderCount,
+			msg.sender,
+			_tokenGet,
+			_amountGet,
+			_tokenGive,
+			_amountGive,
+			block.timestamp
+		);
+
+		emit Order(
+			orderCount,
+			msg.sender,
+			_tokenGet,
+			_amountGet,
+			_tokenGive,
+			_amountGive,
+			block.timestamp
+		);
 	}
 
-	/*----------------------------------------------------------*/
+	/*--------------------Cancel Order-------------------------*/
 
 	function cancelOrder(uint256 _id) public {
-		// Fetching 
+		// Fetch order from mapping abnd assign it to _order
 		_Order storage _order = orders[_id];
-		require(address(_order.user) == msg.sender);
+		require(address(_order.user) == msg.sender, 'Only owner can cancel the order');
 		require(_order.id == _id);
 
 		orderCancelled[_id] = true;
-		emit Cancel(_order.id, msg.sender, _order.tokenGet, _order.amountGet, _order.tokenGive, _order.amountGive, now);
+		emit Cancel(
+			_order.id,
+			msg.sender,
+			_order.tokenGet,
+			_order.amountGet,
+			_order.tokenGive,
+			_order.amountGive,
+			block.timestamp
+		);
 	}
 
 	/*----------------------------------------------------------*/
 
 	function fillOrder(uint256 _id) public {
-		require(_id > 0 && _id <= orderCount);
-		require(!orderFilled[_id]);
-		require(!orderCancelled[_id]);
-		
+		require(_id > 0 && _id <= orderCount, 'Line 1');
+		require(!orderFilled[_id], 'Line 2');
+		require(!orderCancelled[_id], 'Line 3');
+
 		// fetch the order from storage
 		_Order storage _order = orders[_id];
-		_trade(_order.id, _order.user, _order.tokenGet, _order.amountGet, _order.tokenGive, _order.amountGive);
+		_trade(
+			_order.id,
+			_order.user,
+			_order.tokenGet,
+			_order.amountGet,
+			_order.tokenGive,
+			_order.amountGive
+		);
 		orderFilled[_order.id] = true;
-
-		// mark order as filled
 	}
 
 	/*----------------------------------------------------------*/
 
-	function _trade(uint256 _orderId, address _user, address _tokenGet,
-	uint256 _amountGet, address _tokenGive, uint256 _amountGive) internal {
-		// charge fees
+	function _trade(
+		uint256 _orderId,
+		address _user,
+		address _tokenGet,
+		uint256 _amountGet,
+		address _tokenGive,
+		uint256 _amountGive
+	) internal {
 		// Fee paid by the user that fills the order (msg.sender). Deducted from _amountGet
 		uint256 _feeAmount = _amountGive.mul(feePercent).div(100);
-		
+
 		// Execute trade
-		tokens[_tokenGet][msg.sender] = tokens[_tokenGet][msg.sender].sub(_amountGet.add(_feeAmount));
+		// Get sender balance and substract the amount get (including fees)
+		tokens[_tokenGet][msg.sender] = tokens[_tokenGet][msg.sender].sub(
+			_amountGet.add(_feeAmount)
+		);
+
+		// Get the user balance and add the previous value
 		tokens[_tokenGet][_user] = tokens[_tokenGet][_user].add(_amountGet);
 
+		// Add feeAmount to the feeAccount
 		tokens[_tokenGet][feeAccount] = tokens[_tokenGet][feeAccount].add(_feeAmount);
 
+		// Get user balance and substract the amount get
 		tokens[_tokenGive][_user] = tokens[_tokenGive][_user].sub(_amountGive);
+
+		// Get the sender balance and add the previous value
 		tokens[_tokenGive][msg.sender] = tokens[_tokenGive][msg.sender].add(_amountGive);
 
-		// emit trade event
-		emit Trade(_orderId, _user, _tokenGet, _amountGet, _tokenGive, _amountGive, msg.sender, now);
+		emit Trade(
+			_orderId,
+			_user,
+			_tokenGet,
+			_amountGet,
+			_tokenGive,
+			_amountGive,
+			msg.sender,
+			block.timestamp
+		);
 	}
-
 }

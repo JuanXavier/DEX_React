@@ -1,0 +1,5 @@
+TODO:
+[ ] orderbook overlay errors
+[ ] marginleft
+[ ] margin of orderbook component
+[ ] verify all transactions working
