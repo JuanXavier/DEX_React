@@ -1,6 +1,6 @@
 # Decentralized Exchange
 
-![Imgur](https://i.imgur.com/22ldsH5.png)
+![Imgur](https://i.imgur.com/IYV31pW.png)
 
 > Rinkeby Testnet DEX dapplication
 
