@@ -11,8 +11,7 @@
 - [Description](#description)
 - [How To Use](#how-to-use)
 - [Installation](#installation)
-- [Repository overview](#repository-overview)
-- [Screenshots](#screenshots)
+- [References](#references)
 - [Author Info](#author-info)
 
 ---
@@ -107,10 +106,6 @@ npm start
 npm run build
 ```
 
-## Repository overview
-
-Provide an overview of the directory structure and files, for example:
-
 ## References
 
 This project is the result of the content of Dapp University's [Bootcamp](https://dappuniversity.teachable.com/p/blockchain-developer-bootcamp).
@@ -119,5 +114,7 @@ This project is the result of the content of Dapp University's [Bootcamp](https:
 
 ## Author Info
 
-- Twitter - [@juanxavier](https://twitter.com/jamesqquick)
+- Twitter - [@juanxavier](https://twitter.com/juanxavier)
 - LinkedIn - [juanxaviervalverde](https://www.linkedin.com/in/juanxaviervalverde/)
+
+[Back To The Top](#decentralized-exchange)
