@@ -74,8 +74,6 @@ export const loadToken = async (web3, networkId, dispatch) => {
 
 		dispatch(tokenLoaded(token));
 
-		await console.log(token);
-
 		return token;
 	} catch (error) {
 		console.log(
@@ -182,6 +180,9 @@ export const cancelOrder = (dispatch, exchange, order, account) => {
 		.on('transactionHash', (hash) => {
 			dispatch(orderCancelling());
 		})
+		.on('receipt', (receipt) => {
+			console.log('TRANSACTION RECEIPT: ', receipt);
+		})
 		.on('error', (error) => {
 			console.log(error);
 			window.confirm(`There was an error cancelling the order.`);
@@ -189,14 +190,19 @@ export const cancelOrder = (dispatch, exchange, order, account) => {
 		});
 };
 
-/*--------------------------------------------------------------*/
+/*--------------------Fill order--------------------------*/
 
 export const fillOrder = (dispatch, exchange, order, account) => {
+	// console.log('Order to fill: ', order);
+
 	exchange.methods
 		.fillOrder(order.id)
 		.send({from: account})
 		.on('transactionHash', (hash) => {
 			dispatch(orderFilling());
+		})
+		.on('receipt', (receipt) => {
+			console.log('TRANSACTION RECEIPT: ', receipt);
 		})
 		.on('error', (error) => {
 			console.log(error);
@@ -246,6 +252,9 @@ export const depositEther = (dispatch, exchange, web3, amount, account) => {
 		.on('transactionHash', (hash) => {
 			dispatch(balancesLoading());
 		})
+		.on('receipt', (receipt) => {
+			console.log('TRANSACTION RECEIPT: ', receipt);
+		})
 		.on('error', (error) => {
 			console.error(error);
 			window.confirm(`There was an error depositing ETH.`);
@@ -259,6 +268,9 @@ export const withdrawEther = (dispatch, exchange, web3, amount, account) => {
 		.send({from: account})
 		.on('transactionHash', (hash) => {
 			dispatch(balancesLoading());
+		})
+		.on('receipt', (receipt) => {
+			console.log('TRANSACTION RECEIPT: ', receipt);
 		})
 		.on('error', (error) => {
 			console.error(error);
@@ -282,6 +294,9 @@ export const depositToken = (dispatch, exchange, web3, token, amount, account) =
 				.on('transactionHash', (hash) => {
 					dispatch(balancesLoading());
 				})
+				.on('receipt', (receipt) => {
+					console.log('TRANSACTION RECEIPT: ', receipt);
+				})
 				.on('error', (error) => {
 					console.error(error);
 					window.alert(`There was an error!`);
@@ -296,18 +311,21 @@ export const withdrawToken = (dispatch, exchange, web3, token, amount, account) 
 		.on('transactionHash', (hash) => {
 			dispatch(balancesLoading());
 		})
+		.on('receipt', (receipt) => {
+			console.log('TRANSACTION RECEIPT: ', receipt);
+		})
 		.on('error', (error) => {
 			console.error(error);
 			window.alert(`There was an error!`);
 		});
 };
 
-/*------------------Buy / Sell orders-------------------------*/
+/*------------------Make Buy / Sell orders-------------------------*/
 
 export const makeBuyOrder = (dispatch, exchange, token, web3, order, account) => {
 	const tokenGet = token.options.address;
-	const amountGet = web3.utils.toWei(order.amount, 'ether');
 	const tokenGive = ETHER_ADDRESS;
+	const amountGet = web3.utils.toWei(order.amount, 'ether');
 	const amountGive = web3.utils.toWei((order.amount * order.price).toString(), 'ether');
 
 	exchange.methods
@@ -315,6 +333,9 @@ export const makeBuyOrder = (dispatch, exchange, token, web3, order, account) =>
 		.send({from: account})
 		.on('transactionHash', (hash) => {
 			dispatch(buyOrderMaking());
+		})
+		.on('receipt', (receipt) => {
+			console.log('TRANSACTION RECEIPT: ', receipt);
 		})
 		.on('error', (error) => {
 			console.error(error);
@@ -324,15 +345,19 @@ export const makeBuyOrder = (dispatch, exchange, token, web3, order, account) =>
 
 export const makeSellOrder = (dispatch, exchange, token, web3, order, account) => {
 	const tokenGet = ETHER_ADDRESS;
-	const amountGet = web3.utils.toWei((order.amount * order.price).toString(), 'ether');
 	const tokenGive = token.options.address;
+	const amountGet = web3.utils.toWei((order.amount * order.price).toString(), 'ether');
 	const amountGive = web3.utils.toWei(order.amount, 'ether');
+
 
 	exchange.methods
 		.makeOrder(tokenGet, amountGet, tokenGive, amountGive)
 		.send({from: account})
 		.on('transactionHash', (hash) => {
 			dispatch(sellOrderMaking());
+		})
+		.on('receipt', (receipt) => {
+			console.log('TRANSACTION RECEIPT: ', receipt);
 		})
 		.on('error', (error) => {
 			console.error(error);

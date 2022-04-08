@@ -15,7 +15,7 @@ module.exports = {
 		},
 
 		rinkeby: {
-			provider: () => new HDWalletProvider(private.key, private.rinkebyWssEndpoint),
+			provider: () => new HDWalletProvider([private.key1, private.key2], private.rinkebyWssEndpoint),
 			network_id: 4, // Rinkeby's id
 			gas: 5500000, // Rinkeby has a lower block limit than mainnet
 			confirmations: 1, // # of confs to wait between deployments. (default: 0)

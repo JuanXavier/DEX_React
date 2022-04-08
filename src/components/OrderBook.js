@@ -21,7 +21,10 @@ const renderOrder = (order, props) => {
 			key={order.id}
 			placement='auto'
 			overlay={
-				<Tooltip id={order.id}> {`Click here to ${order.orderFillAction}`} </Tooltip>
+				<Tooltip id={order.id}>
+					{' '}
+					{`Click here to ${order.orderFillAction} tokens`}{' '}
+				</Tooltip>
 			}>
 			<tr
 				key={order.id}
@@ -63,6 +66,13 @@ class OrderBook extends Component {
 					<div className='card-header text-center font-weight-bold'>Order Book</div>
 					<div className='card-body order-book'>
 						<table className='table table-dark table-sm small'>
+							<thead className='text-center'>
+								<tr>
+									<th>Amount</th>
+									<th>Token price</th>
+									<th>TOTAL</th>
+								</tr>
+							</thead>
 							{this.props.showOrderBook ? (
 								showOrderBook(this.props)
 							) : (

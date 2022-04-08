@@ -173,8 +173,8 @@ contract Exchange {
 
 	function fillOrder(uint256 _id) public {
 		require(_id > 0 && _id <= orderCount, 'Line 1');
-		require(!orderFilled[_id], 'Line 2');
-		require(!orderCancelled[_id], 'Line 3');
+		require(!orderFilled[_id]);
+		require(!orderCancelled[_id]);
 
 		// fetch the order from storage
 		_Order storage _order = orders[_id];
@@ -200,7 +200,7 @@ contract Exchange {
 		uint256 _amountGive
 	) internal {
 		// Fee paid by the user that fills the order (msg.sender). Deducted from _amountGet
-		uint256 _feeAmount = _amountGive.mul(feePercent).div(100);
+		uint256 _feeAmount = _amountGet.mul(feePercent).div(100);
 
 		// Execute trade
 		// Get sender balance and substract the amount get (including fees)

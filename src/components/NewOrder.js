@@ -32,7 +32,7 @@ const showForm = (props) => {
 	} = props;
 
 	return (
-		<Tabs fill defaultActiveKey='sell' className='bg-dark text-white'>
+		<Tabs fill defaultActiveKey='buy' className='bg-dark text-white'>
 			<Tab eventKey='buy' title='Buy' className='bg-dark'>
 				<form
 					onSubmit={(event) => {

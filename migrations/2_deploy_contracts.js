@@ -7,6 +7,7 @@ module.exports = async function (deployer) {
 	await deployer.deploy(Token);
 
 	const feeAccount = accounts[0];
-	const feePercent = 10;
+	console.log(feeAccount);
+	const feePercent = 1;
 	await deployer.deploy(Exchange, feeAccount, feePercent);
 };

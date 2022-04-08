@@ -76,7 +76,7 @@ class MyTransactions extends Component {
 			<div className='card bg-dark text-white'>
 				<div className='card-header text-center font-weight-bold'>My Transactions</div>
 				<div className='card-body'>
-					<Tabs fill defaultActiveKey='trades' className='bg-dark text-white'>
+					<Tabs fill defaultActiveKey='orders' className='bg-dark text-white'>
 						<Tab eventKey='orders' title='My Open Orders'>
 							<table className='table table-dark table-sm small'>
 								<thead>

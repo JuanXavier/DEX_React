@@ -1,70 +1,121 @@
-# Getting Started with Create React App
+# Decentralized Exchange
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![Imgur](https://i.imgur.com/22ldsH5.png)
 
-## Available Scripts
+> Rinkeby Testnet DEX dapplication
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## Table of Contents
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- [Description](#description)
+- [How To Use](#how-to-use)
+- [Installation](#installation)
+- [Repository overview](#repository-overview)
+- [Screenshots](#screenshots)
+- [Author Info](#author-info)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## Description
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Decentralized exchanges (DEX) are a type of cryptocurrency exchange which allows for direct peer-to-peer cryptocurrency transactions to take place online securely on a blockchain and without the need for an intermediary or central authority.
+In this project, there is one type of ERC-20 token (with no real value) at disposal for exchange, which is the XTAKE (XTK).
 
-### `npm run build`
+### Technologies used:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Solidity
+- Truffle
+- Ganache
+- Web3.js
+- React JS
+- Redux
+- Bootstrap
+- Infura endpoint
+- Ethereum blockchain
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+[Back To The Top](#decentralized-exchange)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## How To Use
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+For interaction with the project, the users must have a wallet connected to the browser. Metamask was the one used for development and testing of this exchange.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1.- Log in with your Metamask account and make sure that:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+&nbsp; &nbsp; &nbsp; a) You are on the Rinkeby Test Network, and
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+![Imgur](https://i.imgur.com/L45pKPm.png)
 
-## Learn More
+&nbsp; &nbsp; &nbsp; b) You have connected your account to the Dapplication
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+![Imgur](https://i.imgur.com/LYMjNRJ.png)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+2.- For new users, it is neccesary to deposit some test ETH on the exchange smart contract since it is needed for buying the XTK token.
 
-### Code Splitting
+![Imgur](https://i.imgur.com/3aec86K.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+![Imgur](https://i.imgur.com/I7ZNIP7.png)
 
-### Analyzing the Bundle Size
+You can get Rinkeby test ETH [HERE](https://faucets.chain.link/rinkeby)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+3.- Once the exchange balance is loaded with test ETH, you may proceed to buy tokens which you can do two ways:
 
-### Making a Progressive Web App
+&nbsp; &nbsp; &nbsp; a) By executing/filling an order placed on the order book.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+![Imgur](https://i.imgur.com/pjtf0IR.png)
 
-### Advanced Configuration
+&nbsp; &nbsp; &nbsp; b) By placing a new buy order with the desired amount of tokens to buy and the ETH amount willing to pay.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+![Imgur](https://i.imgur.com/aHv9Hve.png)
 
-### Deployment
+After placing the order successfully, your order will appear on the order book as well as on your "My Open Orders" tab inside your "My Transactions" component.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+At this point, if you want to, you can cancel the transaction by clicking the X button.
 
-### `npm run build` fails to minify
+![Imgur](https://i.imgur.com/ZJy9kxa.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+![Imgur](https://i.imgur.com/UTQiF9l.png)
+
+After the order is filled, the transaction will appear on the "My transactions" tab annd your ETH and XTK balances will be updated.
+
+![Imgur](https://i.imgur.com/EgZQKa5.png)
+
+![Imgur](https://i.imgur.com/ILTlATB.png)
+
+NOTE: For executing succesfully a buy-token transaction, it is crucial that the user has at least 1% more ETH than the spending value because this is the fee amount which goes to the exchange's Smart Contract deployer. Also, you need to take into consideration the gas fees of the network.
+
+4.- When you are finished with the transactions wanted (and anytime), you can withdraw your unspent ETH from the DEX balance back to your Metamask wallet as well as your new XTK tokens, if you are not willing to sell them anymore.
+
+[Back To The Top](#decentralized-exchange)
+
+## Installation
+
+- For testing this application on a local environment, you will need to clone this repository and run the following commands on the root folder for installing dependencies and running the local server:
+
+```bash
+npm i
+npm start
+```
+
+- For creating a build production of the project, you may run the command
+
+```bash
+npm run build
+```
+
+## Repository overview
+
+Provide an overview of the directory structure and files, for example:
+
+## References
+
+This project is the result of the content of Dapp University's [Bootcamp](https://dappuniversity.teachable.com/p/blockchain-developer-bootcamp).
+
+---
+
+## Author Info
+
+- Twitter - [@juanxavier](https://twitter.com/jamesqquick)
+- LinkedIn - [juanxaviervalverde](https://www.linkedin.com/in/juanxaviervalverde/)
