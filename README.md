@@ -84,9 +84,11 @@ After the order is filled, the transaction will appear on the "My transactions" 
 
 ![Imgur](https://i.imgur.com/ILTlATB.png)
 
+4.- When you are finished with the transactions wanted (and anytime), you can withdraw your unspent ETH from the DEX balance back to your Metamask wallet as well as your new XTK tokens, if you are not willing to sell them anymore.
+
 NOTE: For executing succesfully a buy-token transaction, it is crucial that the user has at least 1% more ETH than the spending value because this is the fee amount which goes to the exchange's Smart Contract deployer. Also, you need to take into consideration the gas fees of the network.
 
-4.- When you are finished with the transactions wanted (and anytime), you can withdraw your unspent ETH from the DEX balance back to your Metamask wallet as well as your new XTK tokens, if you are not willing to sell them anymore.
+If you run into any trouble trying to execute a transaction, try refreshing the webpage and resetting your account by going to your Metamask wallet ang click on "Settings > Advanced > Reset Account". This won't affect your balances by any means.
 
 [Back To The Top](#decentralized-exchange)
 

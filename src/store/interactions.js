@@ -349,7 +349,6 @@ export const makeSellOrder = (dispatch, exchange, token, web3, order, account) =
 	const amountGet = web3.utils.toWei((order.amount * order.price).toString(), 'ether');
 	const amountGive = web3.utils.toWei(order.amount, 'ether');
 
-
 	exchange.methods
 		.makeOrder(tokenGet, amountGet, tokenGive, amountGive)
 		.send({from: account})
