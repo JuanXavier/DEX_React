@@ -1,13 +1,18 @@
-const Token = artifacts.require('Token');
-const Exchange = artifacts.require('Exchange');
+const Token = artifacts.require("Token");
+const Exchange = artifacts.require("Exchange");
+require("dotenv").config();
 
 module.exports = async function (deployer) {
-	const accounts = await web3.eth.getAccounts();
+  const feeAccount = process.env.FEE_ADDRESS;
+  const feePercent = 1;
+  let dexAddress;
 
-	await deployer.deploy(Token);
+  const dex = await deployer.deploy(Exchange, feeAccount, feePercent).then((instance) => {
+    console.log(`Exchange contract deployed at address: ${instance.address}`);
+    dexAddress = instance.address;
+  });
 
-	const feeAccount = accounts[0];
-	console.log(feeAccount);
-	const feePercent = 1;
-	await deployer.deploy(Exchange, feeAccount, feePercent);
+  const token = await deployer.deploy(Token, dexAddress).then((instance) => {
+    console.log(`Token contract deployed at address: ${instance.address}`);
+  });
 };

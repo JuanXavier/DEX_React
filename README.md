@@ -38,7 +38,7 @@ In this project, there is one type of ERC-20 token (with no real value) at dispo
 - React JS
 - Redux
 - Bootstrap
-- Infura endpoint
+- Alchemy endpoint
 - Ethereum blockchain
 
 [Back To The Top](#decentralized-exchange)
